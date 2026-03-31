@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tic-Tac-Toe</title>
+
+
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bg:        #fdf6ec;
+      --card:      #ffffff;
+      --x-color:   #f94f6d;   
+      --o-color:   #2e86de;   
+      --line:      #e8ddd0;
+      --text:      #2d2d2d;
+      --muted:     #a89f96;
+      --win-bg:    #fffbe6;
+      --btn:       #2d2d2d;
+      --btn-text:  #ffffff;
+      --radius:    16px;
+      --cell-size: 100px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      /* A subtle dot-grid pattern for texture */
+      background-image: radial-gradient(circle, #d9cfc4 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+    }
+
+    /* =============================================
+       MAIN CARD
+       ============================================= */
+    .card {
+      background: var(--card);
+      border-radius: 28px;
+      padding: 40px 36px 36px;
+      width: 380px;
+      box-shadow:
+        0 2px 0 #e0d8ce,
+        0 8px 0 #ede5db,
+        0 20px 60px rgba(0,0,0,.10);
+      text-align: center;
+    }
+
+    /* =============================================
+       TITLE
+       ============================================= */
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 38px;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      /* Split X and O colours in the title */
+      background: linear-gradient(90deg, var(--x-color) 40%, var(--o-color) 60%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .status-bar {
+      margin-bottom: 28px;
+      min-height: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* The coloured dot that shows current player */
+    .player-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--x-color);
+      transition: background .3s;
+      flex-shrink: 0;
+    }
+    .player-dot.o { background: var(--o-color); }
+
+    #statusText {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .scoreboard {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .score-box {
+      flex: 1;
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 10px 8px;
+      border: 2px solid var(--line);
+    }
+    .score-box .label {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .score-box .value {
+      font-family: 'Fredoka One', cursive;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+    .score-box.x .value { color: var(--x-color); }
+    .score-box.o .value { color: var(--o-color); }
+    .score-box.draws .value { color: var(--muted); }
+
+    /* =============================================
+       THE 3×3 GAME GRID
+       ============================================= */
+    .grid {
+      /*
+        CSS Grid: creates a 3-column, 3-row layout automatically.
+        Each column is equal width (1fr = 1 fraction of available space).
+      */
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    /* Each individual cell / square */
+    .cell {
+      aspect-ratio: 1;           /* makes height = width (perfect square) */
+      background: var(--bg);
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      font-family: 'Fredoka One', cursive;
+      font-size: 48px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background .15s, transform .1s, border-color .2s;
+      /* Start invisible — the letter pops in via animation */
+      position: relative;
+      overflow: hidden;
+      user-select: none;         /* prevents text selection on click */
+    }
+
+    /* Hover effect — only on empty cells */
+    .cell:not(.taken):hover {
+      background: #f7f0e8;
+      border-color: #c9bfb4;
+      transform: scale(1.04);
+    }
+
+    /* When clicked / filled */
+    .cell.taken { cursor: default; }
+
+    /* X cells */
+    .cell.x { color: var(--x-color); }
+
+    /* O cells */
+    .cell.o { color: var(--o-color); }
+
+    /* Winning cells get a highlight */
+    .cell.winner {
+      background: #fff5c0;
+      border-color: #f5c518;
+      animation: pulse .5s ease infinite alternate;
+    }
+
+    /* Pop-in animation when a letter appears */
+    @keyframes popIn {
+      0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+      70%  { transform: scale(1.15) rotate(3deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .cell.taken .letter {
+      display: inline-block;
+      animation: popIn .25s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+
+    /* Pulse for winning cells */
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to   { transform: scale(1.06); }
+    }
+
+    .result-banner {
+      display: none;             /* hidden by default */
+      background: var(--win-bg);
+      border: 2px solid #f5c518;
+      border-radius: 14px;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'Fredoka One', cursive;
+      letter-spacing: .5px;
+      animation: bannerDrop .35s ease;
+    }
+    .result-banner.show { display: block; }
+
+    @keyframes bannerDrop {
+      from { transform: translateY(-12px); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+
+    .btn-reset {
+      width: 100%;
+      padding: 14px;
+      background: var(--btn);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 18px;
+      letter-spacing: .5px;
+      cursor: pointer;
+      transition: transform .1s, box-shadow .2s, background .2s;
+      box-shadow: 0 4px 0 #111;
+    }
+    .btn-reset:hover {
+      background: #444;
+      box-shadow: 0 6px 0 #111;
+      transform: translateY(-2px);
+    }
+    .btn-reset:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #111;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- TITLE -->
+    <h1>Tic-Tac-Toe</h1>
+
+    <!-- STATUS BAR: shows current player or result message -->
+    <div class="status-bar">
+      <div class="player-dot" id="playerDot"></div>
+      <span id="statusText">Player X's turn</span>
+    </div>
+
+    <!-- SCOREBOARD -->
+    <div class="scoreboard">
+      <div class="score-box x">
+        <div class="label">X Wins</div>
+        <div class="value" id="scoreX">0</div>
+      </div>
+      <div class="score-box draws">
+        <div class="label">Draws</div>
+        <div class="value" id="scoreD">0</div>
+      </div>
+      <div class="score-box o">
+        <div class="label">O Wins</div>
+        <div class="value" id="scoreO">0</div>
+      </div>
+    </div>
+
+    <!-- WIN / DRAW BANNER (hidden until game ends) -->
+    <div class="result-banner" id="resultBanner"></div>
+
+    
+    <div class="grid" id="grid">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+
+    <button class="btn-reset" id="resetBtn">🔄 New Game</button>
+
+  </div>
+
+
+  <script>
+     const cells       = document.querySelectorAll('.cell');  // all 9 cells (NodeList)
+    const statusText  = document.getElementById('statusText');
+    const playerDot   = document.getElementById('playerDot');
+    const resultBanner= document.getElementById('resultBanner');
+    const resetBtn    = document.getElementById('resetBtn');
+    const scoreXEl    = document.getElementById('scoreX');
+    const scoreOEl    = document.getElementById('scoreO');
+    const scoreDEl    = document.getElementById('scoreD');
+
+    // --- 2. STATE (memory of the game) ---
+    let board        = ['','','','','','','','',''];  // 9 empty slots
+    let currentPlayer = 'X';   // X always goes first
+    let gameOver      = false;  // is the game finished?
+    let scores        = { X: 0, O: 0, D: 0 };  // win counts
+
+    // --- 3. WINNING COMBINATIONS ---
+    // These are all the ways a player can win.
+    // Each sub-array contains three cell INDEX numbers that form a line.
+    const winPatterns = [
+      [0, 1, 2],  // top row    →
+      [3, 4, 5],  // middle row →
+      [6, 7, 8],  // bottom row →
+      [0, 3, 6],  // left col   ↓
+      [1, 4, 7],  // mid col    ↓
+      [2, 5, 8],  // right col  ↓
+      [0, 4, 8],  // diagonal   ↘
+      [2, 4, 6],  // diagonal   ↙
+    ];
+
+    // --- 4. HANDLE A CELL CLICK ---
+    // We add a click listener to EVERY cell using a loop.
+    cells.forEach(function(cell) {
+      cell.addEventListener('click', function() {
+
+        // Read which cell was clicked (0–8) from data-index attribute
+        let index = parseInt(cell.getAttribute('data-index'));
+
+        // GUARD CLAUSES — stop the function early if:
+        // (a) game is already over, OR (b) cell is already filled
+        if (gameOver) return;
+        if (board[index] !== '') return;
+
+        // --- PLACE THE MARK ---
+        board[index] = currentPlayer;          // save in our board array
+        cell.classList.add('taken', currentPlayer.toLowerCase()); // style the cell
+        cell.innerHTML = '<span class="letter">' + currentPlayer + '</span>';
+
+        // --- CHECK FOR A WINNER ---
+        let winResult = checkWinner();
+
+        if (winResult) {
+          // winResult contains the winning combo's indices
+          highlightWinners(winResult);
+          scores[currentPlayer]++;         // add 1 to this player's score
+          updateScoreboard();
+          showBanner('🎉 Player ' + currentPlayer + ' wins!');
+          statusText.textContent = 'Player ' + currentPlayer + ' wins!';
+          gameOver = true;
+
+        } else if (board.every(cell => cell !== '')) {
+          // board.every() checks if ALL cells are filled = draw
+          scores.D++;
+          updateScoreboard();
+          showBanner("🤝 It's a Draw!");
+          statusText.textContent = "It's a Draw!";
+          gameOver = true;
+
+        } else {
+          // --- SWITCH PLAYER ---
+          // Ternary operator: if X, switch to O; if O, switch to X
+          currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
+          updateStatus();
+        }
+      });
+    });
+
+    // --- 5. CHECK FOR A WINNER ---
+    // Loops through every winning pattern and checks if
+    // all three cells in that pattern belong to the same player.
+    function checkWinner() {
+      for (let i = 0; i < winPatterns.length; i++) {
+        let [a, b, c] = winPatterns[i];  // destructure the three indices
+
+        if (board[a] !== '' &&       // cell is not empty AND
+            board[a] === board[b] && // all three match
+            board[b] === board[c]) {
+          return winPatterns[i];     // return the winning combo
+        }
+      }
+      return null;  // no winner found
+    }
+
+    // --- 6. HIGHLIGHT THE WINNING CELLS ---
+    function highlightWinners(combo) {
+      combo.forEach(function(index) {
+        cells[index].classList.add('winner');
+      });
+    }
+
+    // --- 7. UPDATE THE STATUS TEXT ---
+    function updateStatus() {
+      statusText.textContent = 'Player ' + currentPlayer + '\'s turn';
+      // Update the coloured dot
+      if (currentPlayer === 'O') {
+        playerDot.classList.add('o');
+      } else {
+        playerDot.classList.remove('o');
+      }
+    }
+
+    // --- 8. SHOW THE RESULT BANNER ---
+    function showBanner(message) {
+      resultBanner.textContent = message;
+      resultBanner.classList.add('show');
+      playerDot.style.display = 'none';  // hide the dot when game is over
+    }
+
+    // --- 9. UPDATE THE SCOREBOARD ---
+    function updateScoreboard() {
+      scoreXEl.textContent = scores.X;
+      scoreOEl.textContent = scores.O;
+      scoreDEl.textContent = scores.D;
+    }
+
+    // --- 10. RESET / NEW GAME ---
+    resetBtn.addEventListener('click', function() {
+      // Reset all state variables
+      board         = ['','','','','','','','',''];
+      currentPlayer = 'X';
+      gameOver      = false;
+
+      // Clear every cell visually
+      cells.forEach(function(cell) {
+        cell.innerHTML = '';
+        cell.className = 'cell';  // removes 'x', 'o', 'taken', 'winner'
+      });
+
+      // Hide the banner, restore the dot, reset status text
+      resultBanner.classList.remove('show');
+      playerDot.style.display = '';
+      updateStatus();
+    });
+
+    // Set the correct dot colour on page load
+    updateStatus();
+
+  </script>
+</body>
+</html>
