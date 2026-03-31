@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stopwatch</title>
+
+   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+
+  <style>
+     :root {
+      --bg:        #0d0f14;
+      --surface:   #161a23;
+      --border:    #252a38;
+      --accent:    #00e5ff;
+      --accent2:   #ff4d6d;
+      --text:      #e8eaf0;
+      --muted:     #6b7280;
+      --lap-bg:    #1a1f2e;
+      --radius:    14px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image:
+        linear-gradient(rgba(0,229,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 36px 36px;
+      width: 360px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.5);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .header h1 {
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+    }
+
+    .display {
+      text-align: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 16px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .display::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    .time {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 58px;
+      color: var(--text);
+      letter-spacing: 3px;
+    }
+
+    .time .ms {
+      font-size: 36px;
+      color: var(--accent);
+    }
+
+    .time-labels {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-top: 6px;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .time-labels span { width: 80px; text-align: center; }
+    .time-labels span:last-child { width: 56px; }
+
+    /* ============================================
+       BUTTONS — main controls row
+       ============================================ */
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    /* All buttons share a base style */
+    button {
+      flex: 1;
+      padding: 13px 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .1s, box-shadow .2s, background .2s;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+    }
+    button:active { transform: scale(.96); }
+
+    /* START button — accent colour */
+    #startBtn {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      box-shadow: 0 0 18px rgba(0,229,255,.25);
+    }
+    #startBtn:hover { box-shadow: 0 0 28px rgba(0,229,255,.45); }
+
+    /* PAUSE button — when running, Start becomes Pause */
+    #startBtn.paused {
+      background: var(--bg);
+      color: var(--accent);
+      border-color: var(--accent);
+      box-shadow: none;
+    }
+
+    /* RESET button */
+    #resetBtn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* LAP button — full-width below */
+    .lap-row { margin-bottom: 24px; }
+    #lapBtn {
+      width: 100%;
+      background: var(--lap-bg);
+      border-color: var(--border);
+    }
+    #lapBtn:hover { border-color: var(--accent); color: var(--accent); }
+    #lapBtn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ============================================
+       LAP LIST
+       ============================================ */
+    .lap-section h2 {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .lap-list {
+      list-style: none;
+      max-height: 200px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      /* custom scrollbar */
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .lap-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--lap-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 13px;
+      animation: slideIn .2s ease;
+    }
+
+    /* Animate each new lap sliding in */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .lap-list .lap-num { color: var(--muted); font-size: 12px; }
+    .lap-list .lap-time { font-family: 'Share Tech Mono', monospace; color: var(--accent); font-size: 14px; }
+
+    /* Empty state */
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 16px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- HEADER -->
+    <div class="header">
+      <h1>⏱ Stopwatch</h1>
+    </div>
+
+    <!-- TIME DISPLAY -->
+    <div class="display">
+      <!--
+        We split the time into three <span> elements
+        so we can style each part independently.
+      -->
+      <div class="time">
+        <span id="minutes">00</span>:<span id="seconds">00</span>.<span id="millis" class="ms">00</span>
+      </div>
+      <div class="time-labels">
+        <span>min</span><span>sec</span><span>ms</span>
+      </div>
+    </div>
+
+    <!-- CONTROL BUTTONS -->
+    <div class="controls">
+      <button id="startBtn">Start</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+
+    <!-- LAP BUTTON (full width) -->
+    <div class="lap-row">
+      <button id="lapBtn" disabled>Lap</button>
+    </div>
+
+    <!-- LAP LIST -->
+    <div class="lap-section">
+      <h2>Lap Times</h2>
+      <ul class="lap-list" id="lapList">
+        <li class="empty" id="emptyMsg">No laps recorded yet.</li>
+      </ul>
+    </div>
+
+  </div><!-- end .card -->
+
+  <script>
+    // ============================================================
+    //  JAVASCRIPT — How the stopwatch works
+    // ============================================================
+
+    // --- 1. GRAB HTML ELEMENTS ---
+    // We store references to every element we need to change.
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+    const millisEl  = document.getElementById('millis');
+    const startBtn  = document.getElementById('startBtn');
+    const resetBtn  = document.getElementById('resetBtn');
+    const lapBtn    = document.getElementById('lapBtn');
+    const lapList   = document.getElementById('lapList');
+    const emptyMsg  = document.getElementById('emptyMsg');
+
+    // --- 2. STATE VARIABLES ---
+    // These variables hold the "memory" of the stopwatch.
+    let intervalId   = null;   // ID returned by setInterval (lets us stop it)
+    let isRunning    = false;  // Is the stopwatch currently ticking?
+    let elapsedMs    = 0;      // Total milliseconds that have passed
+    let startTime    = 0;      // The exact moment we last pressed Start
+    let lapCount     = 0;      // How many laps have been recorded
+
+    // --- 3. THE DISPLAY UPDATER ---
+    // This function converts raw milliseconds into MM:SS.ms and shows it.
+    function updateDisplay(ms) {
+      // Math.floor() rounds DOWN to get whole numbers.
+      let minutes = Math.floor(ms / 60000);           // 60000 ms = 1 minute
+      let seconds = Math.floor((ms % 60000) / 1000);  // remainder after minutes ÷ 1000
+      let millis  = Math.floor((ms % 1000) / 10);     // just the first two ms digits
+
+      // padStart(2, '0') adds a leading zero if the number is < 10
+      // So 5 becomes "05", 12 stays "12"
+      minutesEl.textContent = String(minutes).padStart(2, '0');
+      secondsEl.textContent = String(seconds).padStart(2, '0');
+      millisEl.textContent  = String(millis).padStart(2, '0');
+    }
+
+    // --- 4. START / PAUSE BUTTON ---
+    startBtn.addEventListener('click', function() {
+
+      if (!isRunning) {
+        // --- START ---
+        // Record the current time so we can calculate elapsed time later.
+        // We subtract any time already elapsed (from before a pause).
+        startTime = Date.now() - elapsedMs;
+
+        // setInterval calls the given function every 10 milliseconds.
+        intervalId = setInterval(function() {
+          elapsedMs = Date.now() - startTime;  // how long since we started
+          updateDisplay(elapsedMs);
+        }, 10);
+
+        isRunning = true;
+        startBtn.textContent = 'Pause';
+        startBtn.classList.add('paused');
+        lapBtn.disabled = false;  // allow laps while running
+
+      } else {
+        // --- PAUSE ---
+        // clearInterval stops the setInterval from ticking.
+        clearInterval(intervalId);
+        isRunning = false;
+        startBtn.textContent = 'Start';
+        startBtn.classList.remove('paused');
+        lapBtn.disabled = true;
+      }
+    });
+
+    // --- 5. RESET BUTTON ---
+    resetBtn.addEventListener('click', function() {
+      // Stop the timer
+      clearInterval(intervalId);
+      isRunning = false;
+
+      // Reset all variables back to zero
+      elapsedMs = 0;
+      lapCount  = 0;
+
+      // Reset the display to 00:00.00
+      updateDisplay(0);
+
+      // Reset button labels
+      startBtn.textContent = 'Start';
+      startBtn.classList.remove('paused');
+      lapBtn.disabled = true;
+
+      // Clear the lap list and show the empty message
+      lapList.innerHTML = '';
+      lapList.appendChild(emptyMsg);
+    });
+
+    // --- 6. LAP BUTTON ---
+    lapBtn.addEventListener('click', function() {
+      lapCount++;  // increase lap number by 1
+
+      // Format the current time into a nice string
+      let ms  = elapsedMs;
+      let min = Math.floor(ms / 60000);
+      let sec = Math.floor((ms % 60000) / 1000);
+      let mil = Math.floor((ms % 1000) / 10);
+      let timeString =
+        String(min).padStart(2, '0') + ':' +
+        String(sec).padStart(2, '0') + '.' +
+        String(mil).padStart(2, '0');
+
+      // Remove the "No laps" empty message if it's still there
+      if (emptyMsg.parentNode) {
+        lapList.removeChild(emptyMsg);
+      }
+
+      // Create a new <li> element for this lap
+      let li = document.createElement('li');
+      li.innerHTML =
+        '<span class="lap-num">Lap ' + lapCount + '</span>' +
+        '<span class="lap-time">' + timeString + '</span>';
+
+      // Add it to the TOP of the list (newest lap first)
+      lapList.insertBefore(li, lapList.firstChild);
+    });
+
+  </script>
+</body>
+</html>
