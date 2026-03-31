@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abinaya | Web Developer Portfolio</title>
+
+   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+
+      <a href="#home" class="nav-logo">Abi<span>.</span></a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home"    class="nav-link">Home</a></li>
+        <li><a href="#about"   class="nav-link">About</a></li>
+        <li><a href="#skills"  class="nav-link">Skills</a></li>
+        <li><a href="#projects" class="nav-link">Projects</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+    </div>
+  </nav>
+
+
+  <section id="home" class="hero-section">
+    <div class="hero-container">
+
+      <div class="hero-text">
+        <p class="hero-greeting">👋 Hello, I'm</p>
+
+        <h1 class="hero-name">Abinaya</h1>
+
+        <p class="hero-role">2nd Year Student &amp; <span class="highlight">Beginner Web Developer</span></p>
+
+        <p class="hero-intro">
+          Passionate about building things on the web, one line of code at a time.
+          Currently learning, growing, and creating! 🚀
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#projects" class="btn btn-primary">View My Work</a>
+          <a href="#contact"  class="btn btn-outline">Get In Touch</a>
+        </div>
+      </div>
+
+      <div class="hero-photo">
+        <div class="photo-placeholder">
+          <!-- Decorative initials shown until a real photo is added -->
+          <div class="photo-initials">A</div>
+          <p class="photo-hint">Add your photo here</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <section id="about" class="about-section section">
+    <div class="container">
+
+      
+      <div class="section-header reveal">
+        <span class="section-tag">Who I Am</span>
+        <h2 class="section-title">About Me</h2>
+      </div>
+
+      
+      <div class="about-grid">
+
+        
+        <div class="about-text reveal">
+          <p>
+            Hi there! I'm <strong>Abinaya</strong>, a 2nd year college student
+            who is passionate about learning web development. I started with
+            the basics — HTML, CSS, and JavaScript — and I'm enjoying every
+            step of the journey.
+          </p>
+          <p>
+            I believe that the best way to learn is by building. So I work on
+            small projects to practice what I've learned, improve my problem-
+            solving skills, and slowly turn my ideas into real web pages.
+          </p>
+          <p>
+            My goal is to keep growing as a developer, learn new technologies,
+            and one day build projects that make a real impact. 💡
+          </p>
+          <!-- Download CV button (link to a real PDF when you have one) -->
+          <a href="#" class="btn btn-primary" style="margin-top: 16px; display: inline-block;">
+            Download CV
+          </a>
+        </div>
+
+        <!-- Quick fact cards -->
+        <div class="about-facts reveal">
+
+          <div class="fact-card">
+            <span class="fact-emoji">🎓</span>
+            <div>
+              <p class="fact-label">Education</p>
+              <p class="fact-value">2nd Year, Computer Science</p>
+            </div>
+          </div>
+
+          <div class="fact-card">
+            <span class="fact-emoji">📍</span>
+            <div>
+              <p class="fact-label">Location</p>
+              <p class="fact-value">Tamil Nadu, India</p>
+            </div>
+          </div>
+
+          <div class="fact-card">
+            <span class="fact-emoji">💻</span>
+            <div>
+              <p class="fact-label">Focus Area</p>
+              <p class="fact-value">Frontend Web Development</p>
+            </div>
+          </div>
+
+          <div class="fact-card">
+            <span class="fact-emoji">🌱</span>
+            <div>
+              <p class="fact-label">Currently Learning</p>
+              <p class="fact-value">JavaScript & Responsive Design</p>
+            </div>
+          </div>
+
+          <div class="fact-card">
+            <span class="fact-emoji">🎯</span>
+            <div>
+              <p class="fact-label">Goal</p>
+              <p class="fact-value">Become a Full-Stack Developer</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+ <section id="skills" class="skills-section section">
+    <div class="container">
+
+      <div class="section-header reveal">
+        <span class="section-tag">What I Know</span>
+        <h2 class="section-title">My Skills</h2>
+      </div>
+
+      <div class="skills-grid">
+
+        <div class="skill-card reveal" data-level="75">
+          <div class="skill-header">
+            <span class="skill-icon">🌐</span>
+            <span class="skill-name">HTML5</span>
+            <span class="skill-percent">75%</span>
+          </div>
+          <div class="skill-bar-track">
+            <!-- The fill starts at width:0 and JS animates it to data-level% -->
+            <div class="skill-bar-fill"></div>
+          </div>
+          <p class="skill-desc">Structure and semantic markup of web pages.</p>
+        </div>
+
+        <div class="skill-card reveal" data-level="65">
+          <div class="skill-header">
+            <span class="skill-icon">🎨</span>
+            <span class="skill-name">CSS3</span>
+            <span class="skill-percent">65%</span>
+          </div>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill"></div>
+          </div>
+          <p class="skill-desc">Styling, layouts, flexbox, and responsive design.</p>
+        </div>
+
+        <div class="skill-card reveal" data-level="50">
+          <div class="skill-header">
+            <span class="skill-icon">⚡</span>
+            <span class="skill-name">JavaScript</span>
+            <span class="skill-percent">50%</span>
+          </div>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill"></div>
+          </div>
+          <p class="skill-desc">DOM manipulation, events, and basic logic.</p>
+        </div>
+
+        <div class="skill-card reveal" data-level="60">
+          <div class="skill-header">
+            <span class="skill-icon">📱</span>
+            <span class="skill-name">Responsive Design</span>
+            <span class="skill-percent">60%</span>
+          </div>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill"></div>
+          </div>
+          <p class="skill-desc">Building websites that work on all screen sizes.</p>
+        </div>
+
+        <div class="skill-card reveal" data-level="55">
+          <div class="skill-header">
+            <span class="skill-icon">🐙</span>
+            <span class="skill-name">Git & GitHub</span>
+            <span class="skill-percent">55%</span>
+          </div>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill"></div>
+          </div>
+          <p class="skill-desc">Version control and storing code online.</p>
+        </div>
+
+        <div class="skill-card reveal" data-level="45">
+          <div class="skill-header">
+            <span class="skill-icon">🗄️</span>
+            <span class="skill-name">Problem Solving</span>
+            <span class="skill-percent">45%</span>
+          </div>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill"></div>
+          </div>
+          <p class="skill-desc">Breaking problems into smaller logical steps.</p>
+        </div>
+
+      </div><!-- end .skills-grid -->
+
+    </div>
+  </section>
+
+
+ <section id="projects" class="projects-section section">
+    <div class="container">
+
+      <div class="section-header reveal">
+        <span class="section-tag">What I've Built</span>
+        <h2 class="section-title">My Projects</h2>
+      </div>
+
+      <div class="projects-grid">
+
+        <!-- PROJECT CARD 1 -->
+        <div class="project-card reveal">
+          <!-- Coloured banner at the top of the card -->
+          <div class="project-banner" style="background: linear-gradient(135deg, #fde8d8, #f5c5a3);">
+            <span class="project-emoji">🌐</span>
+          </div>
+          <div class="project-body">
+            <!-- Technology tags -->
+            <div class="project-tags">
+              <span class="tag">HTML</span>
+              <span class="tag">CSS</span>
+            </div>
+            <h3 class="project-title">Simple Landing Page</h3>
+            <p class="project-desc">
+              A clean, static landing page built with HTML and CSS. Practised
+              layouts, typography, and basic styling techniques.
+            </p>
+             <div class="project-links">
+              <a href="#" class="project-link">Live Demo →</a>
+              <a href="#" class="project-link secondary">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT CARD 2 -->
+        <div class="project-card reveal">
+          <div class="project-banner" style="background: linear-gradient(135deg, #d8eafd, #a3c5f5);">
+            <span class="project-emoji">🔢</span>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="tag">HTML</span>
+              <span class="tag">CSS</span>
+              <span class="tag">JavaScript</span>
+            </div>
+            <h3 class="project-title">Basic Calculator</h3>
+            <p class="project-desc">
+              An interactive calculator with basic arithmetic operations.
+              Used JavaScript to handle button clicks and perform calculations.
+            </p>
+            <div class="project-links">
+              <a href="#" class="project-link">Live Demo →</a>
+              <a href="#" class="project-link secondary">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <div class="project-banner" style="background: linear-gradient(135deg, #d8fde8, #a3f5c5);">
+            <span class="project-emoji">📋</span>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="tag">HTML</span>
+              <span class="tag">CSS</span>
+              <span class="tag">JavaScript</span>
+            </div>
+            <h3 class="project-title">Student Record System</h3>
+            <p class="project-desc">
+              A simple web app to add, view, and delete student records.
+              Practised DOM manipulation and dynamic content with JavaScript.
+            </p>
+            <div class="project-links">
+              <a href="#" class="project-link">Live Demo →</a>
+              <a href="#" class="project-link secondary">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <section id="contact" class="contact-section section">
+    <div class="container">
+
+      <div class="section-header reveal">
+        <span class="section-tag">Say Hello</span>
+        <h2 class="section-title">Get In Touch</h2>
+      </div>
+
+      <div class="contact-grid">
+
+        <!-- LEFT: Contact info -->
+        <div class="contact-info reveal">
+          <p class="contact-intro">
+            I'm always happy to connect with fellow learners, developers, or
+            anyone who has a cool project idea! Feel free to reach out. 😊
+          </p>
+
+          <div class="contact-items">
+
+            <div class="contact-item">
+              <div class="contact-icon">📧</div>
+              <div>
+                <p class="contact-label">Email</p>
+                <!-- Replace with your real email address -->
+                <p class="contact-value">abinaya@example.com</p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">💼</div>
+              <div>
+                <p class="contact-label">LinkedIn</p>
+                <!-- Replace with your real LinkedIn URL -->
+                <p class="contact-value">linkedin.com/in/abinaya</p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">🐙</div>
+              <div>
+                <p class="contact-label">GitHub</p>
+                <!-- Replace with your real GitHub username -->
+                <p class="contact-value">github.com/abinaya</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        
+        <div class="contact-form-wrap reveal">
+          <form class="contact-form" id="contactForm">
+
+            
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" placeholder="e.g. Priya" required />
+            </div>
+
+            
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="you@example.com" required />
+            </div>
+
+            
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" placeholder="What's this about?" />
+            </div>
+
+            <!-- Message field -->
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" rows="4" placeholder="Write your message here…" required></textarea>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary full-width">
+              Send Message ✉️
+            </button>
+
+            <!-- Success message (hidden by default; shown by JS after submit) -->
+            <p class="form-success" id="formSuccess">
+              ✅ Message sent! I'll get back to you soon.
+            </p>
+
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        Made with <span class="heart">♥</span> by <strong>Abinaya</strong> &nbsp;·&nbsp; © 2025
+      </p>
+      <p class="footer-sub">Built with HTML, CSS &amp; JavaScript</p>
+    </div>
+  </footer>
+
+
+ <script src="script.js"></script>
+
+</body>
+</html>
